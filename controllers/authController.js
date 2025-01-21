@@ -42,20 +42,16 @@ const authController = {
     login: async (req, res) => {
         try {
             const { email, password } = req.body;
-
-            // Kullanıcıyı bul
             const user = await User.findOne({ email });
             if (!user) {
                 return res.status(400).json({ message: 'Kullanıcı bulunamadı' });
             }
 
-            // Şifre kontrolü
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).json({ message: 'Hatalı şifre' });
             }
 
-            // Token oluştur
             const token = jwt.sign(
                 { id: user._id },
                 process.env.JWT_SECRET,
